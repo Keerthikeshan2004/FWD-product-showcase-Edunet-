@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Orders - Retro</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-color: #2563eb;
+      --primary-dark: #1e40af;
+      --secondary-color: #f8fafc;
+      --accent-color: #f59e0b;
+      --success-color: #10b981;
+      --warning-color: #f59e0b;
+      --danger-color: #ef4444;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --border-color: #e5e7eb;
+      --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-heavy: 0 10px 25px rgba(0, 0, 0, 0.15);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      min-height: 100vh;
+    }
+
+    /* Header (same as main page) */
+    header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 1.5rem 2rem;
+      box-shadow: var(--shadow-medium);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-list {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-list a {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .nav-list a:hover, .nav-list a.active {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Main Content */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    .page-subtitle {
+      font-size: 1.125rem;
+      color: var(--text-secondary);
+    }
+
+    .orders-filters {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 0.75rem 1.5rem;
+      border: 1px solid var(--border-color);
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+    }
+
+    .orders-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .order-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: var(--shadow-light);
+      border: 1px solid var(--border-color);
+      transition: var(--transition);
+    }
+
+    .order-card:hover {
+      box-shadow: var(--shadow-medium);
+      transform: translateY(-2px);
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .order-info h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .order-meta {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .order-status {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.5rem;
+    }
+
+    .status-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-delivered {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-shipped {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .status-processing {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-cancelled {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .order-total {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .order-items {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .order-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--secondary-color);
+      border-radius: 12px;
+    }
+
+    .item-image {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    .item-name {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .item-specs {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .item-price {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .order-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--secondary-color);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-secondary);
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      color: var(--border-color);
+    }
+
+    @media (max-width: 768px) {
+      .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .order-status {
+        align-items: flex-start;
+        width: 100%;
+      }
+
+      .order-item {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .item-image {
+        align-self: center;
+      }
+
+      .order-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1 class="logo">Retro</h1>
+      <nav>
+        <ul class="nav-list">
+          <li><a href="main.html"><i class="fas fa-home"></i> Home</a></li>
+          <li><a href="myorder.html" class="active"><i class="fas fa-box"></i> My Orders</a></li>
+          <li><a href="cart.html"><i class="fas fa-shopping-cart"></i> Cart</a></li>
+          <li><a href="wishlist.html"><i class="fas fa-heart"></i> Wishlist</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-header">
+      <h1 class="page-title">My Orders</h1>
+      <p class="page-subtitle">Track and manage all your orders in one place</p>
+    </div>
+
+    <div class="orders-filters">
+      <button class="filter-btn active">All Orders</button>
+      <button class="filter-btn">Delivered</button>
+      <button class="filter-btn">Shipped</button>
+      <button class="filter-btn">Processing</button>
+      <button class="filter-btn">Cancelled</button>
+    </div>
+
+    <div class="orders-container">
+      <div class="order-card">
+        <div class="order-header">
+          <div class="order-info">
+            <h3>Order #RT2025001</h3>
+            <div class="order-meta">
+              Placed on September 15, 2025 • 3 items
+            </div>
+          </div>
+          <div class="order-status">
+            <div class="status-badge status-delivered">Delivered</div>
+            <div class="order-total">$1,697.00</div>
+          </div>
+        </div>
+
+        <div class="order-items">
+          <div class="order-item">
+            <img src="iphone.jpeg" alt="iPhone 15 Pro Max" class="item-image">
+            <div class="item-details">
+              <div class="item-name">iPhone 15 Pro Max</div>
+              <div class="item-specs">256GB, Natural Titanium • Qty: 1</div>
+              <div class="item-price">$999.00</div>
+            </div>
+          </div>
+          <div class="order-item">
+            <img src="airpods.jpeg" alt="AirPods Pro" class="item-image">
+            <div class="item-details">
+              <div class="item-name">AirPods Pro (2nd Gen)</div>
+              <div class="item-specs">White • Qty: 1</div>
+              <div class="item-price">$199.00</div>
+            </div>
+          </div>
+          <div class="order-item">
+            <img src="iwatch.jpeg" alt="Apple Watch" class="item-image">
+            <div class="item-details">
+              <div class="item-name">Apple Watch Series 9</div>
+              <div class="item-specs">45mm, Midnight • Qty: 1</div>
+              <div class="item-price">$399.00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="order-actions">
+          <button class="action-btn btn-primary">
+            <i class="fas fa-redo"></i>
+            Reorder
+          </button>
+          <button class="action-btn btn-secondary">
+            <i class="fas fa-file-invoice"></i>
+            View Invoice
+          </button>
+          <button class="action-btn btn-secondary">
+            <i class="fas fa-truck"></i>
+            Track Package
+          </button>
+        </div>
+      </div>
+
+      <div class="order-card">
+        <div class="order-header">
+          <div class="order-info">
+            <h3>Order #RT2025002</h3>
+            <div class="order-meta">
+              Placed on September 18, 2025 • 2 items
+            </div>
+          </div>
+          <div class="order-status">
+            <div class="status-badge status-shipped">Shipped</div>
+            <div class="order-total">$1,448.00</div>
+          </div>
+        </div>
+
+        <div class="order-items">
+          <div class="order-item">
+            <img src="macbook.jpeg" alt="MacBook Air" class="item-image">
+            <div class="item-details">
+              <div class="item-name">MacBook Air M3</div>
+              <div class="item-specs">13-inch, Space Gray, 512GB • Qty: 1</div>
+              <div class="item-price">$1,299.00</div>
+            </div>
+          </div>
+          <div class="order-item">
+            <img src="magickb.jpeg" alt="Magic Keyboard" class="item-image">
+            <div class="item-details">
+              <div class="item-name">Magic Keyboard</div>
+              <div class="item-specs">Space Gray • Qty: 1</div>
+              <div class="item-price">$149.00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="order-actions">
+          <button class="action-btn btn-primary">
+            <i class="fas fa-truck"></i>
+            Track Package
+          </button>
+          <button class="action-btn btn-secondary">
+            <i class="fas fa-file-invoice"></i>
+            View Invoice
+          </button>
+        </div>
+      </div>
+
+      <div class="order-card">
+        <div class="order-header">
+          <div class="order-info">
+            <h3>Order #RT2025003</h3>
+            <div class="order-meta">
+              Placed on September 19, 2025 • 1 item
+            </div>
+          </div>
+          <div class="order-status">
+            <div class="status-badge status-processing">Processing</div>
+            <div class="order-total">$1,099.00</div>
+          </div>
+        </div>
+
+        <div class="order-items">
+          <div class="order-item">
+            <img src="ipad.jpeg" alt="iPad Pro" class="item-image">
+            <div class="item-details">
+              <div class="item-name">iPad Pro 12.9"</div>
+              <div class="item-specs">256GB, Space Gray • Qty: 1</div>
+              <div class="item-price">$1,099.00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="order-actions">
+          <button class="action-btn btn-secondary">
+            <i class="fas fa-times"></i>
+            Cancel Order
+          </button>
+          <button class="action-btn btn-secondary">
+            <i class="fas fa-edit"></i>
+            Edit Order
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add this to your orders.html file -->
+<script>
+class OrderManager {
+  constructor() {
+    this.orders = this.loadOrders();
+    this.activeFilter = 'all';
+    
+    this.init();
+  }
+
+  init() {
+    this.renderOrders();
+    this.setupEventListeners();
+    this.setupRealTimeTracking();
+  }
+
+  loadOrders() {
+    // In a real app, this would come from an API
+    return [
+      {
+        id: 'RT2025001',
+        date: '2025-09-15',
+        status: 'delivered',
+        items: [
+          { id: 1, name: 'iPhone 15 Pro Max', price: 999, quantity: 1, image: 'iphone.jpeg' },
+          { id: 2, name: 'AirPods Pro (2nd Gen)', price: 199, quantity: 1, image: 'airpods.jpeg' },
+          { id: 4, name: 'Apple Watch Series 9', price: 399, quantity: 1, image: 'iwatch.jpeg' }
+        ],
+        shipping: {
+          address: '123 Main St, City, State 12345',
+          trackingNumber: 'TRK123456789',
+          carrier: 'UPS',
+          estimatedDelivery: '2025-09-18'
+        },
+        total: 1697
+      },
+      {
+        id: 'RT2025002',
+        date: '2025-09-18',
+        status: 'shipped',
+        items: [
+          { id: 3, name: 'MacBook Air M3', price: 1299, quantity: 1, image: 'macbook.jpeg' },
+          { id: 6, name: 'Magic Keyboard', price: 149, quantity: 1, image: 'magickb.jpeg' }
+        ],
+        shipping: {
+          address: '123 Main St, City, State 12345',
+          trackingNumber: 'TRK987654321',
+          carrier: 'FedEx',
+          estimatedDelivery: '2025-09-22'
+        },
+        total: 1448
+      },
+      {
+        id: 'RT2025003',
+        date: '2025-09-19',
+        status: 'processing',
+        items: [
+          { id: 5, name: 'iPad Pro 12.9"', price: 1099, quantity: 1, image: 'ipad.jpeg' }
+        ],
+        shipping: {
+          address: '123 Main St, City, State 12345',
+          estimatedDelivery: '2025-09-25'
+        },
+        total: 1099
+      }
+    ];
+  }
+
+  setupEventListeners() {
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        this.setActiveFilter(e.target.textContent.toLowerCase().replace(' ', ''));
+      });
+    });
+
+    // Order actions
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('.action-btn')) {
+        const button = e.target.closest('.action-btn');
+        const orderId = button.closest('.order-card').dataset.orderId;
+        const action = button.dataset.action;
+        
+        this.handleOrderAction(orderId, action, button);
+      }
+    });
+
+    // Real-time updates simulation
+    setInterval(() => {
+      this.simulateOrderUpdates();
+    }, 30000); // Check every 30 seconds
+  }
+
+  renderOrders() {
+    const container = document.querySelector('.orders-container');
+    if (!container) return;
+
+    const filteredOrders = this.getFilteredOrders();
+
+    if (filteredOrders.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-box-open"></i>
+          <h3>No orders found</h3>
+          <p>Try adjusting your filters or place your first order</p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = filteredOrders.map(order => `
+      <div class="order-card" data-order-id="${order.id}">
+        ${this.renderOrderHeader(order)}
+        ${this.renderOrderItems(order)}
+        ${this.renderOrderActions(order)}
+        ${this.renderTrackingInfo(order)}
+      </div>
+    `).join('');
+
+    this.animateOrderCards();
+  }
+
+  renderOrderHeader(order) {
+    return `
+      <div class="order-header">
+        <div class="order-info">
+          <h3>Order #${order.id}</h3>
+          <div class="order-meta">
+            Placed on ${this.formatDate(order.date)} • ${order.items.length} item${order.items.length !== 1 ? 's' : ''}
+            ${order.shipping.estimatedDelivery ? `• Estimated delivery: ${this.formatDate(order.shipping.estimatedDelivery)}` : ''}
+          </div>
+        </div>
+        <div class="order-status">
+          <div class="status-badge status-${order.status}">
+            ${this.getStatusIcon(order.status)} ${this.formatStatus(order.status)}
+          </div>
+          <div class="order-total">$${order.total.toFixed(2)}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  renderOrderItems(order) {
+    return `
+      <div class="order-items">
+        ${order.items.map(item => `
+          <div class="order-item" data-item-id="${item.id}">
+            <img src="${item.image}" alt="${item.name}" class="item-image" loading="lazy">
+            <div class="item-details">
+              <div class="item-name">${item.name}</div>
+              <div class="item-specs">Qty: ${item.quantity}</div>
+              <div class="item-price">$${item.price.toFixed(2)}</div>
+            </div>
+            ${this.renderItemActions(item)}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  renderItemActions(item) {
+    return `
+      <div class="item-actions">
+        <button class="item-action-btn" data-action="reorder-item" title="Reorder this item">
+          <i class="fas fa-redo"></i>
+        </button>
+        <button class="item-action-btn" data-action="review-item" title="Write a review">
+          <i class="fas fa-star"></i>
+        </button>
+      </div>
+    `;
+  }
+
+  renderOrderActions(order) {
+    const actions = this.getOrderActions(order.status);
+    
+    return `
+      <div class="order-actions">
+        ${actions.map(action => `
+          <button class="action-btn btn-${action.type}" data-action="${action.key}">
+            <i class="fas fa-${action.icon}"></i>
+            ${action.label}
+          </button>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  renderTrackingInfo(order) {
+    if (!order.shipping.trackingNumber) return '';
+    
+    return `
+      <div class="tracking-info" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <strong>Tracking Information</strong>
+          <button class="track-btn" data-action="track-package">
+            <i class="fas fa-external-link-alt"></i>
+            Track on ${order.shipping.carrier}
+          </button>
+        </div>
+        <div style="font-size: 0.875rem; color: var(--text-secondary);">
+          Tracking #: ${order.shipping.trackingNumber}
+        </div>
+        <div class="tracking-progress" style="margin-top: 0.5rem;">
+          ${this.renderTrackingProgress(order.status)}
+        </div>
+      </div>
+    `;
+  }
+
+  renderTrackingProgress(status) {
+    const steps = [
+      { key: 'processing', label: 'Processing', icon: 'cog' },
+      { key: 'shipped', label: 'Shipped', icon: 'truck' },
+      { key: 'delivered', label: 'Delivered', icon: 'check-circle' }
+    ];
+
+    const currentIndex = steps.findIndex(step => step.key === status);
+    
+    return `
+      <div class="progress-steps" style="display: flex; justify-content: space-between; margin-top: 1rem;">
+        ${steps.map((step, index) => `
+          <div class="progress-step ${index <= currentIndex ? 'completed' : ''}" style="flex: 1; text-align: center;">
+            <div class="step-icon" style="width: 30px; height: 30px; border-radius: 50%; margin: 0 auto 0.5rem; display: flex; align-items: center; justify-content: center; ${index <= currentIndex ? 'background: var(--success-color); color: white;' : 'background: var(--border-color); color: var(--text-secondary);'}">
+              <i class="fas fa-${step.icon}"></i>
+            </div>
+            <div style="font-size: 0.75rem; ${index <= currentIndex ? 'color: var(--success-color);' : 'color: var(--text-secondary);'}">${step.label}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  getFilteredOrders() {
+    if (this.activeFilter === 'all') {
+      return this.orders;
+    }
+    
+    return this.orders.filter(order => {
+      return order.status === this.activeFilter.toLowerCase();
+    });
+  }
+
+  setActiveFilter(filter) {
+    this.activeFilter = filter === 'allorders' ? 'all' : filter;
+    
+    // Update filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.textContent.toLowerCase().replace(' ', '') === (filter === 'all' ? 'allorders' : filter)) {
+        btn.classList.add('active');
+      }
+    });
+
+    this.renderOrders();
+  }
+
+  getOrderActions(status) {
+    const baseActions = [
+      { key: 'view-invoice', label: 'View Invoice', icon: 'file-invoice', type: 'secondary' }
+    ];
+
+    switch (status) {
+      case 'processing':
+        return [
+          { key: 'cancel-order', label: 'Cancel Order', icon: 'times', type: 'secondary' },
+          { key: 'edit-order', label: 'Edit Order', icon: 'edit', type: 'secondary' },
+          ...baseActions
+        ];
+      
+      case 'shipped':
+        return [
+          { key: 'track-package', label: 'Track Package', icon: 'truck', type: 'primary' },
+          ...baseActions
+        ];
+      
+      case 'delivered':
+        return [
+          { key: 'reorder', label: 'Reorder', icon: 'redo', type: 'primary' },
+          { key: 'return-items', label: 'Return Items', icon: 'undo', type: 'secondary' },
+          ...baseActions
+        ];
+      
+      default:
+        return baseActions;
+    }
+  }
+
+  handleOrderAction(orderId, action, button) {
+    const order = this.orders.find(o => o.id === orderId);
+    if (!order) return;
+
+    // Add loading state
+    const originalContent = button.innerHTML;
+    button.innerHTML = '<span class="loading"></span> Processing...';
+    button.disabled = true;
+
+    setTimeout(() => {
+      switch (action) {
+        case 'reorder':
+          this.reorderItems(order);
+          break;
+        case 'track-package':
+          this.trackPackage(order);
+          break;
+        case 'cancel-order':
+          this.cancelOrder(orderId);
+          break;
+        case 'view-invoice':
+          this.viewInvoice(orderId);
+          break;
+        case 'return-items':
+          this.initiateReturn(orderId);
+          break;
+        default:
+          this.showNotification(`Action "${action}" not implemented yet`, 'info');
+      }
+
+      // Restore button state
+      button.innerHTML = originalContent;
+      button.disabled = false;
+    }, 1500);
+  }
+
+  reorderItems(order) {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    order.items.forEach(item => {
+      const existingItem = cart.find(cartItem => cartItem.id === item.id);
+      if (existingItem) {
+        existingItem.quantity += item.quantity;
+      } else {
+        cart.push({
+          ...item,
+          addedAt: new Date().toISOString()
+        });
+      }
+    });
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    this.showNotification(`${order.items.length} items added to cart!`, 'success');
+    
+    // Update cart badge if present
+    const cartBadge = document.getElementById('cartBadge');
+    if (cartBadge) {
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      cartBadge.textContent = totalItems;
+    }
+  }
+
+  trackPackage(order) {
+    if (!order.shipping.trackingNumber) {
+      this.showNotification('No tracking information available', 'error');
+      return;
+    }
+
+    // Simulate opening tracking page
+    this.showNotification(`Opening ${order.shipping.carrier} tracking...`, 'success');
+    
+    // In a real app: window.open(`https://tracking.${order.shipping.carrier.toLowerCase()}.com/${order.shipping.trackingNumber}`);
+  }
+
+  cancelOrder(orderId) {
+    const order = this.orders.find(o => o.id === orderId);
+    
+    if (confirm(`Are you sure you want to cancel order #${orderId}?`)) {
+      order.status = 'cancelled';
+      this.renderOrders();
+      this.showNotification('Order cancelled successfully', 'success');
+    }
+  }
+
+  viewInvoice(orderId) {
+    this.showNotification('Generating invoice...', 'info');
+    
+    setTimeout(() => {
+      // In a real app, this would open/download the invoice
+      this.showNotification('Invoice downloaded', 'success');
+    }, 2000);
+  }
+
+  initiateReturn(orderId) {
+    this.showNotification('Redirecting to return portal...', 'info');
+    // In a real app: window.location.href = `/returns?order=${orderId}`;
+  }
+
+  simulateOrderUpdates() {
+    // Simulate real-time order status updates
+    const processingOrders = this.orders.filter(o => o.status === 'processing');
+    const shippedOrders = this.orders.filter(o => o.status === 'shipped');
+    
+    if (processingOrders.length > 0 && Math.random() > 0.7) {
+      const order = processingOrders[0];
+      order.status = 'shipped';
+      order.shipping.trackingNumber = `TRK${Date.now()}`;
+      this.renderOrders();
+      this.showNotification(`Order #${order.id} has shipped!`, 'success');
+    }
+    
+    if (shippedOrders.length > 0 && Math.random() > 0.9) {
+      const order = shippedOrders[0];
+      order.status = 'delivered';
+      this.renderOrders();
+      this.showNotification(`Order #${order.id} has been delivered!`, 'success');
+    }
+  }
+
+  setupRealTimeTracking() {
+    // Simulate push notifications for order updates
+    if ('Notification' in window && Notification.permission === 'granted') {
+      setTimeout(() => {
+        new Notification('Order Update', {
+          body: 'Your MacBook Air order is out for delivery!',
+          icon: '/favicon.ico'
+        });
+      }, 10000);
+    }
+  }
+
+  animateOrderCards() {
+    const cards = document.querySelectorAll('.order-card');
+    cards.forEach((card, index) => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateX(-20px)';
+      
+      setTimeout(() => {
+        card.style.transition = 'all 0.4s ease';
+        card.style.opacity = '1';
+        card.style.transform = 'translateX(0)';
+      }, index * 150);
+    });
+  }
+
+  formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+
+  formatStatus(status) {
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  }
+
+  getStatusIcon(status) {
+    const icons = {
+      processing: '<i class="fas fa-cog fa-spin"></i>',
+      shipped: '<i class="fas fa-truck"></i>',
+      delivered: '<i class="fas fa-check-circle"></i>',
+      cancelled: '<i class="fas fa-times-circle"></i>'
+    };
+    return icons[status] || '';
+  }
+
+  showNotification(message, type) {
+    let notification = document.getElementById('order-notification');
+    if (!notification) {
+      notification = document.createElement('div');
+      notification.id = 'order-notification';
+      notification.className = 'notification';
+      document.body.appendChild(notification);
+    }
+
+    notification.innerHTML = message;
+    notification.className = `notification ${type}`;
+    
+    setTimeout(() => notification.classList.add('show'), 100);
+    setTimeout(() => notification.classList.remove('show'), 4000);
+  }
+}
+
+// Initialize orders page
+document.addEventListener('DOMContentLoaded', () => {
+  new OrderManager();
+  
+  // Request notification permission
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+});
+</script>
+
+</body>
+</html>

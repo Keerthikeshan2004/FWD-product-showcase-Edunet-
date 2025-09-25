@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart - Retro</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-color: #2563eb;
+      --primary-dark: #1e40af;
+      --secondary-color: #f8fafc;
+      --accent-color: #f59e0b;
+      --success-color: #10b981;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --border-color: #e5e7eb;
+      --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 1.5rem 2rem;
+      box-shadow: var(--shadow-medium);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-list {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-list a {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .nav-list a:hover, .nav-list a.active {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Main Content */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    .cart-progress {
+      background: var(--success-color);
+      height: 8px;
+      border-radius: 4px;
+      margin: 2rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-text {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .cart-container {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 3rem;
+    }
+
+    .cart-items {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: var(--shadow-light);
+      border: 1px solid var(--border-color);
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .item-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 12px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .item-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .item-info h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .item-specs {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+
+    .item-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--secondary-color);
+      border-radius: 8px;
+      padding: 0.25rem;
+    }
+
+    .qty-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .qty-btn:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .qty-input {
+      width: 50px;
+      text-align: center;
+      border: none;
+      background: transparent;
+      font-weight: 600;
+    }
+
+    .item-price {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .remove-btn {
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: var(--transition);
+    }
+
+    .remove-btn:hover {
+      color: #ef4444;
+    }
+
+    .cart-summary {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: var(--shadow-light);
+      border: 1px solid var(--border-color);
+      height: fit-content;
+      position: sticky;
+      top: 120px;
+    }
+
+    .summary-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .summary-row:not(:last-child) {
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .summary-total {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .promo-code {
+      margin: 1.5rem 0;
+    }
+
+    .promo-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    .apply-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--secondary-color);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .apply-btn:hover {
+      background: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+    }
+
+    .checkout-btn {
+      width: 100%;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-size: 1.125rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 1.5rem;
+    }
+
+    .checkout-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .security-badges {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .security-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+    }
+
+    .continue-shopping {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 2rem;
+      transition: var(--transition);
+    }
+
+    .continue-shopping:hover {
+      color: var(--primary-dark);
+    }
+
+    @media (max-width: 968px) {
+      .cart-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .cart-summary {
+        position: static;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .cart-item {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .item-image {
+        align-self: center;
+      }
+
+      .item-actions {
+        justify-content: center;
+        gap: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1 class="logo">Retro</h1>
+      <nav>
+        <ul class="nav-list">
+          <li><a href="main.html"><i class="fas fa-home"></i> Home</a></li>
+          <li><a href="myorder.html"><i class="fas fa-box"></i> My Orders</a></li>
+          <li><a href="cart.html" class="active"><i class="fas fa-shopping-cart"></i> Cart</a></li>
+          <li><a href="wishlist.html"><i class="fas fa-heart"></i> Wishlist</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-header">
+      <h1 class="page-title">Shopping Cart</h1>
+      
+      <div class="progress-text">
+        <i class="fas fa-truck"></i> Add $51 more for FREE shipping!
+      </div>
+      <div class="cart-progress">
+        <div style="width: 75%; height: 100%; background: var(--success-color);"></div>
+      </div>
+    </div>
+
+    <div class="cart-container">
+      <div class="cart-items">
+        <div class="cart-item">
+          <img src="iphone.jpeg" alt="iPhone 15 Pro Max" class="item-image">
+          <div class="item-details">
+            <div class="item-info">
+              <h3>iPhone 15 Pro Max</h3>
+              <div class="item-specs">256GB, Natural Titanium</div>
+            </div>
+            <div class="item-actions">
+              <div class="quantity-controls">
+                <button class="qty-btn"><i class="fas fa-minus"></i></button>
+                <input type="number" value="1" min="1" class="qty-input">
+                <button class="qty-btn"><i class="fas fa-plus"></i></button>
+              </div>
+              <div class="item-price">$999.00</div>
+              <i class="fas fa-trash remove-btn"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="cart-item">
+          <img src="airpods.jpeg" alt="AirPods Pro" class="item-image">
+          <div class="item-details">
+            <div class="item-info">
+              <h3>AirPods Pro (2nd Gen)</h3>
+              <div class="item-specs">White, with MagSafe Case</div>
+            </div>
+            <div class="item-actions">
+              <div class="quantity-controls">
+                <button class="qty-btn"><i class="fas fa-minus"></i></button>
+                <input type="number" value="2" min="1" class="qty-input">
+                <button class="qty-btn"><i class="fas fa-plus"></i></button>
+              </div>
+              <div class="item-price">$398.00</div>
+              <i class="fas fa-trash remove-btn"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="cart-item">
+          <img src="iwatch.jpeg" alt="Apple Watch" class="item-image">
+          <div class="item-details">
+            <div class="item-info">
+              <h3>Apple Watch Series 9</h3>
+              <div class="item-specs">45mm, Midnight Aluminum</div>
+            </div>
+            <div class="item-actions">
+              <div class="quantity-controls">
+                <button class="qty-btn"><i class="fas fa-minus"></i></button>
+                <input type="number" value="1" min="1" class="qty-input">
+                <button class="qty-btn"><i class="fas fa-plus"></i></button>
+              </div>
+              <div class="item-price">$399.00</div>
+              <i class="fas fa-trash remove-btn"></i>
+            </div>
+          </div>
+        </div>
+
+        <a href="#" class="continue-shopping">
+          <i class="fas fa-arrow-left"></i>
+          Continue Shopping
+        </a>
+      </div>
+
+      <div class="cart-summary">
+        <h3 class="summary-title">Order Summary</h3>
+        
+        <div class="summary-row">
+          <span>Subtotal (4 items)</span>
+          <span>$1,796.00</span>
+        </div>
+        
+        <div class="summary-row">
+          <span>Shipping</span>
+          <span>$0.00</span>
+        </div>
+        
+        <div class="summary-row">
+          <span>Tax</span>
+          <span>$143.68</span>
+        </div>
+        
+        <div class="summary-row">
+          <span class="summary-total">Total</span>
+          <span class="summary-total">$1,939.68</span>
+        </div>
+
+        <div class="promo-code">
+          <input type="text" placeholder="Enter promo code" class="promo-input">
+          <button class="apply-btn">Apply Code</button>
+        </div>
+
+        <button class="checkout-btn">
+          <i class="fas fa-lock"></i>
+          Secure Checkout
+        </button>
+
+        <div class="security-badges">
+          <div class="security-badge">
+            <i class="fas fa-shield-alt"></i>
+            SSL Encrypted
+          </div>
+          <div class="security-badge">
+            <i class="fas fa-credit-card"></i>
+            Secure Payment
+          </div>
+          <div class="security-badge">
+            <i class="fas fa-undo"></i>
+            Easy Returns
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add this to your cart.html file after the existing HTML -->
+<script>
+class ShoppingCart {
+  constructor() {
+    this.cart = JSON.parse(localStorage.getItem('cart')) || [];
+    this.promoCode = '';
+    this.shipping = 0;
+    this.tax = 0.08; // 8% tax rate
+    
+    this.init();
+  }
+
+  init() {
+    this.renderCart();
+    this.setupEventListeners();
+    this.updateProgressBar();
+    this.calculateTotals();
+  }
+
+  setupEventListeners() {
+    // Quantity controls
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('.qty-btn')) {
+        const button = e.target.closest('.qty-btn');
+        const productId = parseInt(button.closest('.cart-item').dataset.productId);
+        const isIncrease = button.innerHTML.includes('plus');
+        
+        if (isIncrease) {
+          this.increaseQuantity(productId);
+        } else {
+          this.decreaseQuantity(productId);
+        }
+      }
+
+      if (e.target.closest('.remove-btn')) {
+        const productId = parseInt(e.target.closest('.cart-item').dataset.productId);
+        this.removeItem(productId);
+      }
+    });
+
+    // Quantity input changes
+    document.addEventListener('input', (e) => {
+      if (e.target.classList.contains('qty-input')) {
+        const productId = parseInt(e.target.closest('.cart-item').dataset.productId);
+        const newQuantity = parseInt(e.target.value) || 1;
+        this.updateQuantity(productId, newQuantity);
+      }
+    });
+
+    // Promo code
+    document.querySelector('.apply-btn')?.addEventListener('click', () => {
+      this.applyPromoCode();
+    });
+
+    // Checkout button
+    document.querySelector('.checkout-btn')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.proceedToCheckout();
+    });
+
+    // Auto-save cart on changes
+    window.addEventListener('beforeunload', () => {
+      this.saveCart();
+    });
+  }
+
+  renderCart() {
+    const cartContainer = document.querySelector('.cart-items');
+    
+    if (!cartContainer) return;
+
+    if (this.cart.length === 0) {
+      cartContainer.innerHTML = `
+        <div class="empty-cart">
+          <i class="fas fa-shopping-cart"></i>
+          <h3>Your cart is empty</h3>
+          <p>Add some items to get started</p>
+          <a href="index.html" class="continue-shopping">
+            <i class="fas fa-arrow-left"></i>
+            Start Shopping
+          </a>
+        </div>
+      `;
+      return;
+    }
+
+    const cartItemsHTML = this.cart.map(item => `
+      <div class="cart-item" data-product-id="${item.id}">
+        <img src="${item.image}" alt="${item.name}" class="item-image">
+        <div class="item-details">
+          <div class="item-info">
+            <h3>${item.name}</h3>
+            <div class="item-specs">${item.category} • ${item.description.substring(0, 50)}...</div>
+          </div>
+          <div class="item-actions">
+            <div class="quantity-controls">
+              <button class="qty-btn" ${item.quantity <= 1 ? 'disabled' : ''}>
+                <i class="fas fa-minus"></i>
+              </button>
+              <input type="number" value="${item.quantity}" min="1" max="99" class="qty-input">
+              <button class="qty-btn">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <div class="item-price">$${(item.price * item.quantity).toFixed(2)}</div>
+            <i class="fas fa-trash remove-btn" title="Remove item"></i>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    cartContainer.innerHTML = cartItemsHTML + `
+      <a href="index.html" class="continue-shopping">
+        <i class="fas fa-arrow-left"></i>
+        Continue Shopping
+      </a>
+    `;
+  }
+
+  increaseQuantity(productId) {
+    const item = this.cart.find(item => item.id === productId);
+    if (item && item.quantity < 99) {
+      item.quantity += 1;
+      this.updateCartDisplay();
+      this.animateQuantityChange(productId);
+    }
+  }
+
+  decreaseQuantity(productId) {
+    const item = this.cart.find(item => item.id === productId);
+    if (item && item.quantity > 1) {
+      item.quantity -= 1;
+      this.updateCartDisplay();
+      this.animateQuantityChange(productId);
+    }
+  }
+
+  updateQuantity(productId, newQuantity) {
+    const item = this.cart.find(item => item.id === productId);
+    if (item && newQuantity >= 1 && newQuantity <= 99) {
+      item.quantity = newQuantity;
+      this.updateCartDisplay();
+    }
+  }
+
+  removeItem(productId) {
+    if (confirm('Are you sure you want to remove this item?')) {
+      this.cart = this.cart.filter(item => item.id !== productId);
+      this.renderCart();
+      this.calculateTotals();
+      this.updateProgressBar();
+      this.saveCart();
+      this.showNotification('Item removed from cart', 'success');
+    }
+  }
+
+  animateQuantityChange(productId) {
+    const cartItem = document.querySelector(`[data-product-id="${productId}"]`);
+    if (cartItem) {
+      cartItem.style.transform = 'scale(1.02)';
+      setTimeout(() => {
+        cartItem.style.transform = 'scale(1)';
+      }, 200);
+    }
+  }
+
+  updateCartDisplay() {
+    // Update quantity display and item totals
+    this.cart.forEach(item => {
+      const cartItem = document.querySelector(`[data-product-id="${item.id}"]`);
+      if (cartItem) {
+        const qtyInput = cartItem.querySelector('.qty-input');
+        const itemPrice = cartItem.querySelector('.item-price');
+        const minusBtn = cartItem.querySelector('.qty-btn');
+        
+        qtyInput.value = item.quantity;
+        itemPrice.textContent = `$${(item.price * item.quantity).toFixed(2)}`;
+        minusBtn.disabled = item.quantity <= 1;
+      }
+    });
+
+    this.calculateTotals();
+    this.updateProgressBar();
+    this.saveCart();
+  }
+
+  calculateTotals() {
+    const subtotal = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const shipping = subtotal >= 100 ? 0 : 15; // Free shipping over $100
+    const promoDiscount = this.calculatePromoDiscount(subtotal);
+    const taxableAmount = subtotal - promoDiscount;
+    const tax = taxableAmount * this.tax;
+    const total = subtotal + shipping + tax - promoDiscount;
+
+    // Update display
+    this.updateSummaryDisplay({
+      subtotal,
+      shipping,
+      tax,
+      promoDiscount,
+      total,
+      itemCount: this.cart.reduce((sum, item) => sum + item.quantity, 0)
+    });
+  }
+
+  updateSummaryDisplay(totals) {
+    const summaryElements = {
+      subtotal: document.querySelector('#summary-subtotal'),
+      shipping: document.querySelector('#summary-shipping'),
+      tax: document.querySelector('#summary-tax'),
+      total: document.querySelector('#summary-total'),
+      itemCount: document.querySelector('#item-count')
+    };
+
+    // Create summary if it doesn't exist
+    if (!summaryElements.subtotal) {
+      this.createSummaryElements(totals);
+      return;
+    }
+
+    if (summaryElements.itemCount) {
+      summaryElements.itemCount.textContent = `${totals.itemCount} item${totals.itemCount !== 1 ? 's' : ''}`;
+    }
+    if (summaryElements.subtotal) {
+      summaryElements.subtotal.textContent = `$${totals.subtotal.toFixed(2)}`;
+    }
+    if (summaryElements.shipping) {
+      summaryElements.shipping.textContent = totals.shipping === 0 ? 'FREE' : `$${totals.shipping.toFixed(2)}`;
+    }
+    if (summaryElements.tax) {
+      summaryElements.tax.textContent = `$${totals.tax.toFixed(2)}`;
+    }
+    if (summaryElements.total) {
+      summaryElements.total.textContent = `$${totals.total.toFixed(2)}`;
+    }
+  }
+
+  createSummaryElements(totals) {
+    const cartSummary = document.querySelector('.cart-summary');
+    if (!cartSummary) return;
+
+    cartSummary.innerHTML = `
+      <h3 class="summary-title">Order Summary</h3>
+      
+      <div class="summary-row">
+        <span>Subtotal (<span id="item-count">${totals.itemCount} items</span>)</span>
+        <span id="summary-subtotal">$${totals.subtotal.toFixed(2)}</span>
+      </div>
+      
+      <div class="summary-row">
+        <span>Shipping</span>
+        <span id="summary-shipping">${totals.shipping === 0 ? 'FREE' : `$${totals.shipping.toFixed(2)}`}</span>
+      </div>
+      
+      <div class="summary-row">
+        <span>Tax</span>
+        <span id="summary-tax">$${totals.tax.toFixed(2)}</span>
+      </div>
+      
+      <div class="summary-row">
+        <span class="summary-total">Total</span>
+        <span class="summary-total" id="summary-total">$${totals.total.toFixed(2)}</span>
+      </div>
+
+      <div class="promo-code">
+        <input type="text" placeholder="Enter promo code" class="promo-input" id="promoInput">
+        <button class="apply-btn">Apply Code</button>
+      </div>
+
+      <button class="checkout-btn">
+        <i class="fas fa-lock"></i>
+        Secure Checkout
+      </button>
+
+      <div class="security-badges">
+        <div class="security-badge">
+          <i class="fas fa-shield-alt"></i>
+          SSL Encrypted
+        </div>
+        <div class="security-badge">
+          <i class="fas fa-credit-card"></i>
+          Secure Payment
+        </div>
+        <div class="security-badge">
+          <i class="fas fa-undo"></i>
+          Easy Returns
+        </div>
+      </div>
+    `;
+
+    // Re-setup event listeners for new elements
+    this.setupEventListeners();
+  }
+
+  updateProgressBar() {
+    const subtotal = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const freeShippingThreshold = 100;
+    const progress = Math.min((subtotal / freeShippingThreshold) * 100, 100);
+    
+    const progressBar = document.querySelector('.cart-progress div');
+    const progressText = document.querySelector('.progress-text');
+    
+    if (progressBar) {
+      progressBar.style.width = `${progress}%`;
+    }
+
+    if (progressText) {
+      if (subtotal >= freeShippingThreshold) {
+        progressText.innerHTML = '<i class="fas fa-check"></i> You qualify for FREE shipping!';
+        progressText.style.color = 'var(--success-color)';
+      } else {
+        const remaining = freeShippingThreshold - subtotal;
+        progressText.innerHTML = `<i class="fas fa-truck"></i> Add $${remaining.toFixed(2)} more for FREE shipping!`;
+        progressText.style.color = 'var(--text-secondary)';
+      }
+    }
+  }
+
+  applyPromoCode() {
+    const promoInput = document.getElementById('promoInput');
+    if (!promoInput) return;
+    
+    const code = promoInput.value.trim().toUpperCase();
+    const validCodes = {
+      'SAVE10': { type: 'percentage', value: 0.10, description: '10% off' },
+      'FLAT20': { type: 'fixed', value: 20, description: '$20 off' },
+      'WELCOME': { type: 'percentage', value: 0.15, description: '15% off first order' }
+    };
+
+    if (validCodes[code]) {
+      this.promoCode = code;
+      this.calculateTotals();
+      this.showNotification(`Promo code applied! ${validCodes[code].description}`, 'success');
+      promoInput.disabled = true;
+      document.querySelector('.apply-btn').textContent = 'Applied';
+    } else {
+      this.showNotification('Invalid promo code', 'error');
+      promoInput.focus();
+    }
+  }
+
+  calculatePromoDiscount(subtotal) {
+    const validCodes = {
+      'SAVE10': { type: 'percentage', value: 0.10 },
+      'FLAT20': { type: 'fixed', value: 20 },
+      'WELCOME': { type: 'percentage', value: 0.15 }
+    };
+
+    if (!this.promoCode || !validCodes[this.promoCode]) return 0;
+
+    const promo = validCodes[this.promoCode];
+    return promo.type === 'percentage' 
+      ? subtotal * promo.value 
+      : Math.min(promo.value, subtotal);
+  }
+
+  proceedToCheckout() {
+    if (this.cart.length === 0) {
+      this.showNotification('Your cart is empty', 'error');
+      return;
+    }
+
+    // Simulate loading
+    const checkoutBtn = document.querySelector('.checkout-btn');
+    const originalText = checkoutBtn.innerHTML;
+    
+    checkoutBtn.innerHTML = '<span class="loading"></span> Processing...';
+    checkoutBtn.disabled = true;
+
+    setTimeout(() => {
+      // In a real app, this would redirect to payment processing
+      alert('Redirecting to secure checkout...');
+      checkoutBtn.innerHTML = originalText;
+      checkoutBtn.disabled = false;
+    }, 2000);
+  }
+
+  showNotification(message, type) {
+    // Create notification if it doesn't exist
+    let notification = document.getElementById('cart-notification');
+    if (!notification) {
+      notification = document.createElement('div');
+      notification.id = 'cart-notification';
+      notification.className = 'notification';
+      document.body.appendChild(notification);
+    }
+
+    notification.textContent = message;
+    notification.className = `notification ${type}`;
+    
+    setTimeout(() => notification.classList.add('show'), 100);
+    setTimeout(() => notification.classList.remove('show'), 3000);
+  }
+
+  saveCart() {
+    localStorage.setItem('cart', JSON.stringify(this.cart));
+    
+    // Update cart badge in header if present
+    const cartBadge = document.getElementById('cartBadge');
+    if (cartBadge) {
+      const totalItems = this.cart.reduce((sum, item) => sum + item.quantity, 0);
+      cartBadge.textContent = totalItems;
+    }
+  }
+}
+
+// Initialize cart page
+document.addEventListener('DOMContentLoaded', () => {
+  new ShoppingCart();
+});
+</script>
+
+</body>
+</html>

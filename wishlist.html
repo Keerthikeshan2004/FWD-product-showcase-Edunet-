@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Wishlist - Retro</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-color: #2563eb;
+      --primary-dark: #1e40af;
+      --secondary-color: #f8fafc;
+      --accent-color: #f59e0b;
+      --success-color: #10b981;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --border-color: #e5e7eb;
+      --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-heavy: 0 10px 25px rgba(0, 0, 0, 0.15);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 1.5rem 2rem;
+      box-shadow: var(--shadow-medium);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-list {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-list a {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .nav-list a:hover, .nav-list a.active {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Main Content */
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    .page-subtitle {
+      font-size: 1.125rem;
+      color: var(--text-secondary);
+    }
+
+    .wishlist-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .wishlist-count {
+      color: var(--text-secondary);
+      font-size: 1.125rem;
+    }
+
+    .wishlist-controls {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .control-btn {
+      padding: 0.75rem 1.5rem;
+      border: 1px solid var(--border-color);
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .control-btn:hover, .control-btn.active {
+      background: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+    }
+
+    .share-btn {
+      background: var(--success-color);
+      color: white;
+      border-color: var(--success-color);
+    }
+
+    .share-btn:hover {
+      background: #059669;
+      border-color: #059669;
+    }
+
+    .wishlist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .wishlist-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow-light);
+      transition: var(--transition);
+      position: relative;
+      border: 1px solid var(--border-color);
+    }
+
+    .wishlist-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-heavy);
+    }
+
+    .card-image-container {
+      position: relative;
+      overflow: hidden;
+      height: 250px;
+      background: var(--secondary-color);
+    }
+
+    .wishlist-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+
+    .wishlist-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .availability-badge {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .in-stock {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .low-stock {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .out-of-stock {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .remove-wishlist {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--shadow-light);
+      color: #ef4444;
+    }
+
+    .remove-wishlist:hover {
+      background: #ef4444;
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .card-content {
+      padding: 1.5rem;
+    }
+
+    .product-category {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+
+    .product-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      line-height: 1.3;
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .stars {
+      color: var(--accent-color);
+    }
+
+    .rating-text {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-left: 0.5rem;
+    }
+
+    .price-section {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .current-price {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .original-price {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      text-decoration: line-through;
+    }
+
+    .discount-badge {
+      background: #ef4444;
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .add-to-cart-btn {
+      flex: 1;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.875rem;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .add-to-cart-btn:hover:not(:disabled) {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .add-to-cart-btn:disabled {
+      background: var(--text-secondary);
+      cursor: not-allowed;
+    }
+
+    .move-to-cart-btn {
+      background: var(--success-color);
+      color: white;
+    }
+
+    .move-to-cart-btn:hover {
+      background: #059669;
+    }
+
+    .view-product-btn {
+      background: white;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 0.875rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .view-product-btn:hover {
+      background: var(--secondary-color);
+    }
+
+    .empty-wishlist {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-secondary);
+    }
+
+    .empty-wishlist i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      color: var(--border-color);
+    }
+
+    .empty-wishlist h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .start-shopping-btn {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 1rem;
+    }
+
+    .start-shopping-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    @media (max-width: 768px) {
+      .wishlist-actions {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+
+      .wishlist-controls {
+        justify-content: center;
+      }
+
+      .wishlist-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .card-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1 class="logo">Retro</h1>
+      <nav>
+        <ul class="nav-list">
+          <li><a href="main.html"><i class="fas fa-home"></i> Home</a></li>
+          <li><a href="myorder.html"><i class="fas fa-box"></i> My Orders</a></li>
+          <li><a href="cart.html"><i class="fas fa-shopping-cart"></i> Cart</a></li>
+          <li><a href="wishlist.html" class="active"><i class="fas fa-heart"></i> Wishlist</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-header">
+      <h1 class="page-title">My Wishlist</h1>
+      <p class="page-subtitle">Save your favorite items for later and never miss a deal</p>
+    </div>
+
+    <div class="wishlist-actions">
+      <div class="wishlist-count">
+        <i class="fas fa-heart"></i> 5 items in your wishlist
+      </div>
+      <div class="wishlist-controls">
+        <button class="control-btn">
+          <i class="fas fa-sort"></i>
+          Sort by Price
+        </button>
+        <button class="control-btn">
+          <i class="fas fa-filter"></i>
+          Filter
+        </button>
+        <button class="control-btn share-btn">
+          <i class="fas fa-share"></i>
+          Share Wishlist
+        </button>
+      </div>
+    </div>
+
+    <div class="wishlist-grid">
+      <div class="wishlist-card">
+        <div class="card-image-container">
+          <img src="iphone.jpeg" alt="iPhone 15 Pro Max">
+          <div class="availability-badge in-stock">In Stock</div>
+          <button class="remove-wishlist">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="card-content">
+          <div class="product-category">Electronics</div>
+          <h3 class="product-title">iPhone 15 Pro Max</h3>
+          <div class="rating">
+            <div class="stars">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <span class="rating-text">(127 reviews)</span>
+          </div>
+          <div class="price-section">
+            <span class="current-price">$999</span>
+            <span class="original-price">$1199</span>
+            <span class="discount-badge">17% OFF</span>
+          </div>
+          <div class="card-actions">
+            <button class="add-to-cart-btn move-to-cart-btn">
+              <i class="fas fa-shopping-cart"></i>
+              Add to Cart
+            </button>
+            <button class="view-product-btn">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="wishlist-card">
+        <div class="card-image-container">
+          <img src="macbook.jpeg" alt="MacBook Air">
+          <div class="availability-badge in-stock">In Stock</div>
+          <button class="remove-wishlist">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="card-content">
+          <div class="product-category">Computers</div>
+          <h3 class="product-title">MacBook Air M3</h3>
+          <div class="rating">
+            <div class="stars">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <span class="rating-text">(234 reviews)</span>
+          </div>
+          <div class="price-section">
+            <span class="current-price">$1299</span>
+          </div>
+          <div class="card-actions">
+            <button class="add-to-cart-btn">
+              <i class="fas fa-shopping-cart"></i>
+              Add to Cart
+            </button>
+            <button class="view-product-btn">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="wishlist-card">
+        <div class="card-image-container">
+          <img src="airpods.jpeg" alt="AirPods Pro">
+          <div class="availability-badge low-stock">Only 2 left</div>
+          <button class="remove-wishlist">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="card-content">
+          <div class="product-category">Audio</div>
+          <h3 class="product-title">AirPods Pro (2nd Gen)</h3>
+          <div class="rating">
+            <div class="stars">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="far fa-star"></i>
+            </div>
+            <span class="rating-text">(89 reviews)</span>
+          </div>
+          <div class="price-section">
+            <span class="current-price">$199</span>
+            <span class="original-price">$249</span>
+            <span class="discount-badge">20% OFF</span>
+          </div>
+          <div class="card-actions">
+            <button class="add-to-cart-btn">
+              <i class="fas fa-shopping-cart"></i>
+              Add to Cart
+            </button>
+            <button class="view-product-btn">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="wishlist-card">
+        <div class="card-image-container">
+          <img src="iwatch.jpeg" alt="Apple Watch">
+          <div class="availability-badge in-stock">In Stock</div>
+          <button class="remove-wishlist">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="card-content">
+          <div class="product-category">Wearables</div>
+          <h3 class="product-title">Apple Watch Series 9</h3>
+          <div class="rating">
+            <div class="stars">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="far fa-star"></i>
+            </div>
+            <span class="rating-text">(156 reviews)</span>
+          </div>
+          <div class="price-section">
+            <span class="current-price">$399</span>
+            <span class="original-price">$429</span>
+            <span class="discount-badge">7% OFF</span>
+          </div>
+          <div class="card-actions">
+            <button class="add-to-cart-btn">
+              <i class="fas fa-shopping-cart"></i>
+              Add to Cart
+            </button>
+            <button class="view-product-btn">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="wishlist-card">
+        <div class="card-image-container">
+          <img src="magickb.jpeg" alt="Gaming Mouse">
+          <div class="availability-badge out-of-stock">Out of Stock</div>
+          <button class="remove-wishlist">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="card-content">
+          <div class="product-category">Gaming</div>
+          <h3 class="product-title">Pro Gaming Mouse</h3>
+          <div class="rating">
+            <div class="stars">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <span class="rating-text">(312 reviews)</span>
+          </div>
+          <div class="price-section">
+            <span class="current-price">$89</span>
+            <span class="original-price">$129</span>
+            <span class="discount-badge">31% OFF</span>
+          </div>
+          <div class="card-actions">
+            <button class="add-to-cart-btn" disabled>
+              <i class="fas fa-bell"></i>
+              Notify When Available
+            </button>
+            <button class="view-product-btn">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add this to your wishlist.html file -->
+<script>
+class WishlistManager {
+  constructor() {
+    this.wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    this.cart = JSON.parse(localStorage.getItem('cart')) || [];
+    this.sortBy = 'dateAdded';
+    this.filterBy = 'all';
+    
+    this.init();
+  }
+
+  init() {
+    this.renderWishlist();
+    this.setupEventListeners();
+    this.updateWishlistCount();
+    this.checkPriceDrops();
+  }
+
+  setupEventListeners() {
+    // Add to cart buttons
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('.add-to-cart-btn')) {
+        const productId = parseInt(e.target.closest('.wishlist-card').dataset.productId);
+        this.moveToCart(productId);
+      }
+
+      if (e.target.closest('.remove-wishlist')) {
+        const productId = parseInt(e.target.closest('.wishlist-card').dataset.productId);
+        this.removeFromWishlist(productId);
+      }
+
+      if (e.target.closest('.view-product-btn')) {
+        const productId = parseInt(e.target.closest('.wishlist-card').dataset.productId);
+        this.viewProduct(productId);
+      }
+    });
+
+    // Sort and filter controls
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('[data-sort]')) {
+        const sortType = e.target.closest('[data-sort]').dataset.sort;
+        this.sortWishlist(sortType);
+      }
+
+      if (e.target.closest('[data-filter]')) {
+        const filterType = e.target.closest('[data-filter]').dataset.filter;
+        this.filterWishlist(filterType);
+      }
+    });
+
+    // Share wishlist
+    document.querySelector('.share-btn')?.addEventListener('click', () => {
+      this.shareWishlist();
+    });
+
+    // Bulk actions
+    document.addEventListener('change', (e) => {
+      if (e.target.classList.contains('item-checkbox')) {
+        this.updateBulkActions();
+      }
+    });
+  }
+
+  renderWishlist() {
+    const wishlistGrid = document.querySelector('.wishlist-grid');
+    
+    if (!wishlistGrid) return;
+
+    if (this.wishlist.length === 0) {
+      wishlistGrid.innerHTML = `
+        <div class="empty-wishlist">
+          <i class="fas fa-heart"></i>
+          <h3>Your wishlist is empty</h3>
+          <p>Save items you love for later</p>
+        </div>
+      `;
+      return;
+    }
+
+    const filteredAndSortedItems = this.getFilteredAndSortedItems();
+
+    wishlistGrid.innerHTML = filteredAndSortedItems.map(item => `
+      <div class="wishlist-card" data-product-id="${item.id}">
+        <div class="card-image-container">
+          <img src="${item.image}" alt="${item.name}" loading="lazy">
+          ${this.getAvailabilityBadge(item)}
+          <button class="remove-wishlist" title="Remove from wishlist">
+            <i class="fas fa-times"></i>
+          </button>
+          <input type="checkbox" class="item-checkbox" style="position: absolute; top: 50px; left: 1rem;">
+        </div>
+        <div class="card-content">
+          <div class="product-category">${item.category}</div>
+          <h3 class="product-title">${item.name}</h3>
+          ${this.generateRating(item.rating, item.reviews)}
+          <div class="price-section">
+            <span class="current-price">$${item.price}</span>
+            ${item.originalPrice ? `<span class="original-price">$${item.originalPrice}</span>` : ''}
+            ${this.getDiscountBadge(item)}
+            ${this.getPriceDropIndicator(item)}
+          </div>
+          <div class="card-actions">
+            ${this.getActionButton(item)}
+            <button class="view-product-btn" title="View details">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    this.animateCards();
+  }
+
+  getFilteredAndSortedItems() {
+    let items = [...this.wishlist];
+
+    // Apply filters
+    if (this.filterBy !== 'all') {
+      items = items.filter(item => {
+        switch (this.filterBy) {
+          case 'inStock':
+            return item.inStock !== false;
+          case 'onSale':
+            return item.originalPrice && item.originalPrice > item.price;
+          case 'priceDrops':
+            return this.hasPriceDrop(item);
+          default:
+            return true;
+        }
+      });
+    }
+
+    // Apply sorting
+    items.sort((a, b) => {
+      switch (this.sortBy) {
+        case 'priceAsc':
+          return a.price - b.price;
+        case 'priceDesc':
+          return b.price - a.price;
+        case 'name':
+          return a.name.localeCompare(b.name);
+        case 'dateAdded':
+        default:
+          return new Date(b.addedAt) - new Date(a.addedAt);
+      }
+    });
+
+    return items;
+  }
+
+  getAvailabilityBadge(item) {
+    if (item.inStock === false) {
+      return '<div class="availability-badge out-of-stock">Out of Stock</div>';
+    }
+    if (item.stock && item.stock <= 5) {
+      return `<div class="availability-badge low-stock">Only ${item.stock} left</div>`;
+    }
+    return '<div class="availability-badge in-stock">In Stock</div>';
+  }
+
+  getDiscountBadge(item) {
+    if (item.originalPrice && item.originalPrice > item.price) {
+      const discount = Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100);
+      return `<span class="discount-badge">${discount}% OFF</span>`;
+    }
+    return '';
+  }
+
+  getPriceDropIndicator(item) {
+    if (this.hasPriceDrop(item)) {
+      return '<div class="price-drop-indicator"><i class="fas fa-arrow-down"></i> Price dropped!</div>';
+    }
+    return '';
+  }
+
+  getActionButton(item) {
+    if (item.inStock === false) {
+      return `
+        <button class="add-to-cart-btn" disabled>
+          <i class="fas fa-bell"></i>
+          Notify When Available
+        </button>
+      `;
+    }
+    
+    const isInCart = this.cart.some(cartItem => cartItem.id === item.id);
+    if (isInCart) {
+      return `
+        <button class="add-to-cart-btn move-to-cart-btn" style="background: var(--success-color);">
+          <i class="fas fa-check"></i>
+          In Cart
+        </button>
+      `;
+    }
+    
+    return `
+      <button class="add-to-cart-btn">
+        <i class="fas fa-shopping-cart"></i>
+        Add to Cart
+      </button>
+    `;
+  }
+
+  generateRating(rating, reviews) {
+    const stars = Array(5).fill(0).map((_, i) => 
+      `<i class="fas fa-star${i < rating ? '' : ' far'}"></i>`
+    ).join('');
+    
+    return `
+      <div class="rating">
+        <div class="stars">${stars}</div>
+        <span class="rating-text">(${reviews} reviews)</span>
+      </div>
+    `;
+  }
+
+  moveToCart(productId) {
+    const item = this.wishlist.find(item => item.id === productId);
+    if (!item || item.inStock === false) return;
+
+    // Add to cart
+    const existingCartItem = this.cart.find(cartItem => cartItem.id === productId);
+    if (existingCartItem) {
+      existingCartItem.quantity += 1;
+    } else {
+      this.cart.push({
+        ...item,
+        quantity: 1,
+        addedAt: new Date().toISOString()
+      });
+    }
+
+    // Remove from wishlist
+    this.wishlist = this.wishlist.filter(wishItem => wishItem.id !== productId);
+
+    this.saveData();
+    this.renderWishlist();
+    this.updateWishlistCount();
+    this.showNotification(`${item.name} moved to cart!`, 'success');
+    
+    // Animate the action
+    this.animateCardRemoval(productId);
+  }
+
+  removeFromWishlist(productId) {
+    const item = this.wishlist.find(item => item.id === productId);
+    if (!item) return;
+
+    if (confirm(`Remove "${item.name}" from your wishlist?`)) {
+      this.wishlist = this.wishlist.filter(wishItem => wishItem.id !== productId);
+      this.saveData();
+      this.renderWishlist();
+      this.updateWishlistCount();
+      this.showNotification(`${item.name} removed from wishlist`, 'success');
+      this.animateCardRemoval(productId);
+    }
+  }
+
+  viewProduct(productId) {
+    // In a real app, this would navigate to the product detail page
+    this.showNotification('Opening product details...', 'success');
+    // window.location.href = `product.html?id=${productId}`;
+  }
+
+  sortWishlist(sortType) {
+    this.sortBy = sortType;
+    
+    // Update active sort button
+    document.querySelectorAll('[data-sort]').forEach(btn => 
+      btn.classList.remove('active'));
+    document.querySelector(`[data-sort="${sortType}"]`)?.classList.add('active');
+    
+    this.renderWishlist();
+    this.showNotification(`Sorted by ${this.getSortLabel(sortType)}`, 'success');
+  }
+
+  filterWishlist(filterType) {
+    this.filterBy = filterType;
+    
+    // Update active filter button
+    document.querySelectorAll('[data-filter]').forEach(btn => 
+      btn.classList.remove('active'));
+    document.querySelector(`[data-filter="${filterType}"]`)?.classList.add('active');
+    
+    this.renderWishlist();
+    this.updateWishlistCount();
+  }
+
+  getSortLabel(sortType) {
+    const labels = {
+      dateAdded: 'Date Added',
+      priceAsc: 'Price: Low to High',
+      priceDesc: 'Price: High to Low',
+      name: 'Name'
+    };
+    return labels[sortType] || sortType;
+  }
+
+  shareWishlist() {
+    if (navigator.share) {
+      navigator.share({
+        title: 'My Wishlist',
+        text: 'Check out my wishlist!',
+        url: window.location.href
+      });
+    } else {
+      // Fallback: copy to clipboard
+      const wishlistData = {
+        items: this.wishlist.length,
+        total: this.wishlist.reduce((sum, item) => sum + item.price, 0),
+        url: window.location.href
+      };
+      
+      navigator.clipboard.writeText(
+        `My Wishlist: ${wishlistData.items} items worth $${wishlistData.total.toFixed(2)} - ${wishlistData.url}`
+      ).then(() => {
+        this.showNotification('Wishlist link copied to clipboard!', 'success');
+      });
+    }
+  }
+
+  updateWishlistCount() {
+    const countElement = document.querySelector('.wishlist-count');
+    if (countElement) {
+      const filteredCount = this.getFilteredAndSortedItems().length;
+      const totalCount = this.wishlist.length;
+      
+      if (this.filterBy === 'all') {
+        countElement.innerHTML = `<i class="fas fa-heart"></i> ${totalCount} item${totalCount !== 1 ? 's' : ''} in your wishlist`;
+      } else {
+        countElement.innerHTML = `<i class="fas fa-heart"></i> ${filteredCount} of ${totalCount} items shown`;
+      }
+    }
+  }
+
+  checkPriceDrops() {
+    // Simulate price drop checking (in real app, this would be server-side)
+    const priceDropItems = this.wishlist.filter(item => this.hasPriceDrop(item));
+    
+    if (priceDropItems.length > 0) {
+      setTimeout(() => {
+        this.showNotification(
+          `${priceDropItems.length} item${priceDropItems.length !== 1 ? 's have' : ' has'} price drops!`, 
+          'success'
+        );
+      }, 1000);
+    }
+  }
+
+  hasPriceDrop(item) {
+    // Simulate price drop detection
+    return item.originalPrice && Math.random() > 0.7;
+  }
+
+  animateCards() {
+    const cards = document.querySelectorAll('.wishlist-card');
+    cards.forEach((card, index) => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      
+      setTimeout(() => {
+        card.style.transition = 'all 0.3s ease';
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }, index * 100);
+    });
+  }
+
+  animateCardRemoval(productId) {
+    const card = document.querySelector(`[data-product-id="${productId}"]`);
+    if (card) {
+      card.style.transform = 'scale(0.8)';
+      card.style.opacity = '0';
+    }
+  }
+
+  updateBulkActions() {
+    const checkedBoxes = document.querySelectorAll('.item-checkbox:checked');
+    // Implementation for bulk actions UI
+    console.log(`${checkedBoxes.length} items selected`);
+  }
+
+  showNotification(message, type) {
+    let notification = document.getElementById('wishlist-notification');
+    if (!notification) {
+      notification = document.createElement('div');
+      notification.id = 'wishlist-notification';
+      notification.className = 'notification';
+      document.body.appendChild(notification);
+    }
+
+    notification.textContent = message;
+    notification.className = `notification ${type}`;
+    
+    setTimeout(() => notification.classList.add('show'), 100);
+    setTimeout(() => notification.classList.remove('show'), 3000);
+  }
+
+  saveData() {
+    localStorage.setItem('wishlist', JSON.stringify(this.wishlist));
+    localStorage.setItem('cart', JSON.stringify(this.cart));
+  }
+}
+
+// Initialize wishlist page
+document.addEventListener('DOMContentLoaded', () => {
+  new WishlistManager();
+  
+  // Add enhanced controls to the existing page
+  const controlsContainer = document.querySelector('.wishlist-controls');
+  if (controlsContainer) {
+    controlsContainer.innerHTML = `
+      <button class="control-btn" data-sort="priceAsc">
+        <i class="fas fa-sort-amount-up"></i>
+        Price: Low to High
+      </button>
+      <button class="control-btn" data-sort="priceDesc">
+        <i class="fas fa-sort-amount-down"></i>
+        Price: High to Low
+      </button>
+      <button class="control-btn" data-filter="inStock">
+        <i class="fas fa-check-circle"></i>
+        In Stock
+      </button>
+      <button class="control-btn" data-filter="onSale">
+        <i class="fas fa-percentage"></i>
+        On Sale
+      </button>
+      <button class="control-btn share-btn">
+        <i class="fas fa-share"></i>
+        Share Wishlist
+      </button>
+    `;
+  }
+});
+</script>
+
+</body>
+</html>
